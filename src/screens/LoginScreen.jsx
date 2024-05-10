@@ -13,8 +13,8 @@ const LoginScreen = () => {
     // Implement your login logic here
     console.log('Email:', email);
     console.log('Password:', password);
-    const response = await fetchDetails();
-    console.log('Response: fetched');
+    // const response = await fetchDetails();
+    // console.log('Response: fetched');
     // navigation.navigate('Home');
     navigation.reset({
       index: 0,
