@@ -1,8 +1,18 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
-import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
-import {Button, StyleSheet, Text, TextInput, View} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import React, {useEffect, useRef, useState} from 'react';
+import {
+  Button,
+  Keyboard,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {Calendar} from 'react-native-calendars';
+// import {[Calendar](#calendar), [CalendarList](#calendarlist), [Agenda](#agenda)} from 'react-native-calendars';
 
 const BookClass = () => {
   const [meetingTitle, setMeetingTitle] = useState('');
@@ -11,14 +21,35 @@ const BookClass = () => {
   const [meetingStartTime, setMeetingStartTime] = useState('');
   const [meetingEndTime, setMeetingEndTime] = useState('');
   const [remarks, setRemarks] = useState('');
+  const [datePicker, toggleDatePicker] = useState(false);
   const navigation = useNavigation();
 
   const handleBookRoom = () => {
-    console.log("Book room");
+    console.log('Book room');
   };
+
+  const renderArrow = direction => {
+    if (direction === 'left') {
+      return <Text>{this.state.up}</Text>;
+    } else {
+      return <Text>{this.state.down}</Text>;
+    }
+  };
+
+  const handleDataPicker = () => {
+    console.log('Handle DP');
+    toggleDatePicker(!datePicker);
+    Keyboard.dismiss();
+  };
+
+  // useEffect(() => {
+
+  // }, [datePicker]);
 
   return (
     <View style={styles.container}>
+      
+
       <Text style={styles.label}>Meeting Title</Text>
       <TextInput
         style={styles.input}
@@ -37,13 +68,23 @@ const BookClass = () => {
       />
 
       <Text style={styles.label}>Meeting Date</Text>
-      <TextInput
-        style={styles.input}
-        value={meetingDate}
-        onChangeText={setMeetingDate}
-        secureTextEntry
-      />
-
+      {datePicker && <Calendar
+        onDayPress={day => {
+          console.log('selected day', day);
+          setMeetingDate(day.dateString);
+          toggleDatePicker(!datePicker);
+        }}
+        minDate={new Date()}
+      />}
+      <TouchableOpacity onPress={() => handleDataPicker()}>
+        <View pointerEvents="none">
+          <TextInput
+            style={styles.input}
+            value={meetingDate}
+            onChangeText={setMeetingDate}
+          />
+        </View>
+      </TouchableOpacity>
       <Text style={styles.label}>Time</Text>
       <View style={styles.row}>
         <TextInput
