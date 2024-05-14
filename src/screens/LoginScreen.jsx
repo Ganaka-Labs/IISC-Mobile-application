@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Button, Image, StyleSheet, Text, TextInput, View } from 'react-native';
 import fetchDetails from '../apis/services';
 
 const LoginScreen = () => {
@@ -30,19 +30,20 @@ const LoginScreen = () => {
         routes: [{ name: 'Registration' }],
       });
       // return true;
-      // const response = await axios.get('https://jsonplaceholder.typicode.com/users');
+      // const response = await axios.post('https://jsonplaceholder.typicode.com/users',formData);
     } catch (error) {
       return false;
     }
   };
   return (
+    
     <View style={styles.container}>
-      <Text style={styles.logo}>LOGO</Text>
+      <Image style={styles.logo} source={require('../asset/images/IIsc_image.png')} alt=''/>
 
       <View style={styles.header}>
         <Text style={styles.welcome}>WelcomeBack!</Text>
         <Text style={styles.signin}>Sign in to your Account </Text>
-       
+        
         <Text style={styles.label}> Your email</Text>
         <TextInput
           style={styles.input}
@@ -69,24 +70,26 @@ const LoginScreen = () => {
       
       </View>
 
-      <Text style={{ color: '#000' }}>Don't have account?{'\n'}
+      <Text style={{ color: '#000' ,marginTop:20}}>Don't have account?</Text>
         <Text onPress={() => {
           handleRegistration();
         }}
-          style={{ color: '#00F' }}>
+          style={{ color: '#00F',width:"100%",textAlign:"center" }}>
           Sign Up
         </Text>
-      </Text>
     </View>
   );
 };
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
+    flex: 1,
     display: 'flex',
-    justifyContent: 'center',
+    justifyContent: 'center-top',
     alignItems: 'center',
     paddingHorizontal: 20,
+    width:'100%',
+    height:'100%',
+   
   },
   label: {
     fontSize: 15,
@@ -94,8 +97,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   input: {
-    width: '100%',
-    height: 40,
+    // width: '100%',
+    // height: 40,
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 10,
@@ -104,18 +107,17 @@ const styles = StyleSheet.create({
 
   },
   button: {
-    width: '50%',
-    paddingTop: 40,
-    marginBottom: 50,
+    width: '100%',
+    paddingTop: 50,
+    marginTop:50,
   },
 
 
   logo: {
-    fontSize: 40,
-    color: "black",
-    fontWeight: 'bold',
-    marginBottom: 30,
-
+    width:100,
+    height:100,
+    marginVertical: 10,
+    borderRadius:200
   },
 
   signin: {
@@ -126,11 +128,13 @@ const styles = StyleSheet.create({
   },
   header:{
     padding:10,
+    paddingBottom:50,
     borderWidth:2,
     borderColor:'#F5F5F5',
     backgroundColor:'white',
-    borderRadius:10,
-  }
+    borderRadius:5,
+  },
+
 
 
 });
