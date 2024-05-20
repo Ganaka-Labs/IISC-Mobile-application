@@ -3,7 +3,7 @@ import React from 'react';
 import {Text, View, useWindowDimensions} from 'react-native';
 import {SceneMap, TabView} from 'react-native-tab-view';
 import BookClass from './BookClass';
-import MyBooking from './MyBookings';
+import MyBooking from './mybookings/MyBookings';
 import Profile from './Profile';
 import LoginScreen from './LoginScreen';
 
