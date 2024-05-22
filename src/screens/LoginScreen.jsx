@@ -1,3 +1,4 @@
+/* eslint-disable no-trailing-spaces */
 /* eslint-disable func-call-spacing */
 /* eslint-disable comma-dangle */
 /* eslint-disable prettier/prettier */
@@ -12,7 +13,8 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import fetchDetails from '../apis/services';
+import fetchDetails, { doLogin } from '../apis/services';
+import { ShowToast } from '../utilities/Utils';
 
 const LoginScreen = () => {
   // const LoginState = {
@@ -27,32 +29,26 @@ const LoginScreen = () => {
   const navigation = useNavigation();
 
   const handleLogin = async () => {
-    // Implement your login logic here
-    // console.log('Email:', email);
-    // console.log('Password:', password);
     setLoading(true);
-    const response = await fetchDetails('ram@gmail.com', '1234');
+    const payload = {
+      email: email,
+      password: password,
+    };
+    const response = await doLogin(payload);
     console.log('Response: fetched');
+    setLoading(false);
     if(response) {
       navigation.reset({
         index: 0,
         routes: [{name: 'home'}],
       });
+    } else {
+      ShowToast(response.message);
     }
-    
-    setLoading(false);
   };
 
-  const handleRegistration = async () => {
-    // Implement your login logic here
-    try {
-      navigation.reset({
-        index: 0,
-        routes: [{name: 'registration'}],
-      });
-    } catch (error) {
-      return false;
-    }
+  const navigateRegistration = () => {
+      navigation.navigate('registration');
   };
   return (
     <>
@@ -99,7 +95,7 @@ const LoginScreen = () => {
           </Text>
           <Text
             onPress={() => {
-              handleRegistration();
+              navigateRegistration();
             }}
             style={{color: '#00F', width: '100%', textAlign: 'center'}}>
             Sign Up

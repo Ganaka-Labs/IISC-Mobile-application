@@ -3,43 +3,46 @@ import { useNavigation } from '@react-navigation/native';
 import { NavigationActions } from 'react-navigation';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { doRegistration } from '../apis/services';
+import { ShowToast } from '../utilities/Utils';
 
 const RegistrationScreen = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setLoading] = useState(false);
   const navigation = useNavigation();
 
   const handleRegistration = async () => {
-    // Implement your login logic here
-    // const response = await fetchDetails();
-    const resposne = await doRegistration();
-    // console.log('Doing reg..: ', resposne);
-    if (true) {
-      // navigation.navigate('Home');
+    setLoading(true);
+    const payload = {
+        email: email,
+        password: password,
+        name: name,
+        phone: phone,
+      };
+    const resposne = await doRegistration(payload);
+    console.log('User Registered: ', resposne);
+    setLoading(false);
+    if (resposne) {
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Home' }],
+        routes: [{ name: 'login' }],
       });
-    }
-  };
-
-  const doRegistration = async () => {
-    try {
-      setTimeout({
-        return: true,
-      }, 2000);
-      // const response = await axios.get('https://jsonplaceholder.typicode.com/users');
-    } catch (error) {
-      return false;
+      ShowToast('User registered successfully, please login..');
+    } else {
+      ShowToast(resposne.message);
     }
   };
 
   return (
-
-    <View style={styles.container}>
+    <>
+    {isLoading && (
+      <ActivityIndicator style={StyleSheet.loader}/>
+    )}
+      <View style={styles.container}>
       <View style={styles.form} >
         <Text style={styles.There}>Hi There!</Text>
         <Text style={styles.SignUp}>Sign Up</Text>
@@ -80,6 +83,8 @@ const RegistrationScreen = () => {
         <Button title="Register" onPress={handleRegistration} />
       </View>
     </View>
+    </>
+    
 
 
   );
