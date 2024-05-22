@@ -16,9 +16,9 @@ const App = () => {
   return (
     <NavigationContainer>
       <AppStack.Navigator initialRouteName="Login">
-        <AppStack.Screen name="Login" component={LoginScreen} />
-        <AppStack.Screen name="Registration" component={RegistrationScreen} />
-        <AppStack.Screen name="Home" component={HomeScreen} />
+        <AppStack.Screen name="login" component={LoginScreen} />
+        <AppStack.Screen name="registration" component={RegistrationScreen} />
+        <AppStack.Screen name="home" component={HomeScreen} />
       </AppStack.Navigator>
     </NavigationContainer>
   );
