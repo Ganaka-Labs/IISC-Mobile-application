@@ -3,7 +3,7 @@
 /* eslint-disable comma-dangle */
 /* eslint-disable prettier/prettier */
 import {NavigationContainer, useNavigation} from '@react-navigation/native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Button,
@@ -13,8 +13,17 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import fetchDetails, { doLogin } from '../apis/services';
-import { ShowToast } from '../utilities/Utils';
+import fetchDetails, {doLogin} from '../apis/services';
+import {ShowToast} from '../utilities/Utils';
+import {
+  USER_DETAILS,
+  getData,
+  getFromLocal,
+  jsonToStringify,
+  setData,
+  setToLocal,
+  stringifyToJSON,
+} from '../utilities/LocalStorage';
 
 const LoginScreen = () => {
   // const LoginState = {
@@ -28,84 +37,103 @@ const LoginScreen = () => {
   // const [loginState, setLoginState] = useState(LoginState());
   const navigation = useNavigation();
 
+  const isLoggedIn = async () => {
+    const localData = await getFromLocal(USER_DETAILS);
+    const user = JSON.parse(localData);
+    if (user.token) {
+      navigateToHome();
+    }
+  };
+
+  useEffect(() => {isLoggedIn();});
+
+  const navigateToHome = () => {
+    navigation.reset({
+      index: 0,
+      routes: [{name: 'home'}],
+    });
+  };
+
   const handleLogin = async () => {
     setLoading(true);
     const payload = {
       email: email,
       password: password,
     };
-    const response = await doLogin(payload);
-    console.log('Response: fetched');
-    setLoading(false);
-    if(response) {
-      navigation.reset({
-        index: 0,
-        routes: [{name: 'home'}],
-      });
-    } else {
-      ShowToast(response.message);
+    try {
+      const response = await doLogin(payload);
+      const userString = await JSON.stringify(response);
+      await setToLocal(USER_DETAILS, userString);
+      // const localData = await getFromLocal(USER_DETAILS);
+      // console.log('Local Data user: ', localData);
+      // const user = await JSON.parse(localData);
+      // console.log('Local Data JSON obj: ', user);
+      // console.log('Token: ',user.token);
+      // console.log('Email: ',user.email);
+      setLoading(false);
+      if (response) {
+        ShowToast('Login successful..');
+        navigateToHome();
+      } else {
+        ShowToast(response.message);
+      }
+    } catch (error) {
+      setLoading(false);
+      ShowToast('Error communication with server..');
     }
   };
 
   const navigateRegistration = () => {
-      navigation.navigate('registration');
+    navigation.navigate('registration');
   };
   return (
     <>
-      {isLoading && (
-        <ActivityIndicator style={StyleSheet.loader}/>
-      )}
-      <View style={styles.container}>
-          <Image
-            style={styles.logo}
-            source={require('../asset/images/IIsc_image.png')}
-            alt=""
+      {isLoading && <ActivityIndicator style={StyleSheet.loader} />}
+      <View style={styles.loginContainer}>
+        <Image
+          style={styles.logo}
+          source={require('../asset/images/IIsc_image.png')}
+          alt=""
+        />
+
+        <View style={styles.header}>
+          <Text style={styles.welcome}>WelcomeBack!</Text>
+          <Text style={styles.signin}>Sign in to your Account </Text>
+          <Text style={styles.label}> Your email</Text>
+          <TextInput
+            style={styles.input}
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            placeholder="Enter your email"
+          />
+          <Text style={styles.label}>Password</Text>
+          <TextInput
+            style={styles.input}
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            placeholder="Enter your password"
           />
 
-          <View style={styles.header}>
-            <Text style={styles.welcome}>WelcomeBack!</Text>
-            <Text style={styles.signin}>Sign in to your Account </Text>
-            <Text style={styles.label}> Your email</Text>
-            <TextInput
-              style={styles.input}
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              placeholder="Enter your email"
-            />
-            <Text style={styles.label}>Password</Text>
-            <TextInput
-              style={styles.input}
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              placeholder="Enter your password"
-            />
-
-            <Button
-              title="Sign in"
-              onPress={handleLogin}
-              style={styles.button}
-            />
-          </View>
-
-          <Text style={{color: '#000', marginTop: 20}}>
-            Don't have account?
-          </Text>
-          <Text
-            onPress={() => {
-              navigateRegistration();
-            }}
-            style={{color: '#00F', width: '100%', textAlign: 'center'}}>
-            Sign Up
-          </Text>
+          <Button title="Sign in" onPress={handleLogin} style={styles.button} />
         </View>
+
+        <Text style={{color: '#000', marginTop: 20}}>Don't have account?</Text>
+        <Text
+          onPress={() => {
+            navigateRegistration();
+          }}
+          style={{color: '#00F', width: '100%', textAlign: 'center'}}>
+          Sign Up
+        </Text>
+      </View>
     </>
   );
 };
 const styles = StyleSheet.create({
-  container: {
+  loginContainer: {
     flex: 1,
     display: 'flex',
     justifyContent: 'center-top',
@@ -158,8 +186,8 @@ const styles = StyleSheet.create({
     height: '100%',
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center'
-  }
+    alignItems: 'center',
+  },
 });
 
 export default LoginScreen;
