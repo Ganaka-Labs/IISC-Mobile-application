@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import { doRegistration } from '../apis/services';
 import { ShowToast } from '../utilities/Utils';
+import { CommonStyles } from '../components/CommonStyles';
 
 const RegistrationScreen = () => {
   const [name, setName] = useState('');
@@ -40,7 +41,7 @@ const RegistrationScreen = () => {
   return (
     <>
     {isLoading && (
-      <ActivityIndicator style={StyleSheet.loader}/>
+      <ActivityIndicator style={CommonStyles.loader} size='large'/>
     )}
       <View style={styles.container}>
       <View style={styles.form} >

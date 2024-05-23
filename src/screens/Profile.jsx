@@ -5,6 +5,7 @@
 import React from 'react';
 import { Button, View, Text, TextInput, Stylesheet, StyleSheet } from 'react-native';
 import { doLogout } from '../apis/services';
+import { CommonStyles, Styles } from '../components/CommonStyles';
 import { useNavigation } from '@react-navigation/native';
 import { ShowToast } from '../utilities/Utils';
 import { useState } from 'react';
