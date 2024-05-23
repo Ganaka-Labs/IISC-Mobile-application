@@ -5,7 +5,7 @@
 import React from 'react';
 import {Button, View} from 'react-native';
 import { doLogout } from '../apis/services';
-import { Styles } from '../components/CommonStyles';
+import { CommonStyles, Styles } from '../components/CommonStyles';
 import { useNavigation } from '@react-navigation/native';
 import { ShowToast } from '../utilities/Utils';
 
@@ -22,8 +22,8 @@ const Profile = () => {
   };
 
   return (
-    <View style={Styles.container}>
-      <Button style={Styles.button} title="Logout" onPress={handleLogout}/>
+    <View style={CommonStyles.container}>
+      <Button style={CommonStyles.button} title="Logout" onPress={handleLogout}/>
   </View>
 );
 };

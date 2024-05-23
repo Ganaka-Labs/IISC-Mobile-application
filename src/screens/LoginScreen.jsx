@@ -3,7 +3,7 @@
 /* eslint-disable comma-dangle */
 /* eslint-disable prettier/prettier */
 import {NavigationContainer, useNavigation} from '@react-navigation/native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Button,
@@ -24,6 +24,7 @@ import {
   setToLocal,
   stringifyToJSON,
 } from '../utilities/LocalStorage';
+import { CommonStyles } from '../components/CommonStyles';
 
 const LoginScreen = () => {
   // const LoginState = {
@@ -45,7 +46,9 @@ const LoginScreen = () => {
     }
   };
 
-  useEffect(() => {isLoggedIn();});
+  useEffect(() => {
+    isLoggedIn();
+  });
 
   const navigateToHome = () => {
     navigation.reset({
@@ -88,7 +91,7 @@ const LoginScreen = () => {
   };
   return (
     <>
-      {isLoading && <ActivityIndicator style={StyleSheet.loader} />}
+      {isLoading && <ActivityIndicator style={CommonStyles.loader} size='large' />}
       <View style={styles.loginContainer}>
         <Image
           style={styles.logo}

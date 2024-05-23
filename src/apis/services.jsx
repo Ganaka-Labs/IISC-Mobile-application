@@ -7,6 +7,7 @@ const BaseUrl =
   'http://ec2-3-108-67-174.ap-south-1.compute.amazonaws.com:8000/';
 const Login = 'user/signin';
 const Registration = 'user/signup';
+const Rooms = 'resource/';
 
 export const doLogin = async (payload) => {
   try {
@@ -32,4 +33,13 @@ export const doRegistration = async (payload) => {
 
 export const doLogout = async () => {
   await clearLocalStorage();
+}
+
+export const getAllRooms = async() => {
+  try {
+    const response = await axios.get(BaseUrl + Rooms);
+    if(response) { return response.data};
+  } catch (error) {
+    return error;
+  }
 }
