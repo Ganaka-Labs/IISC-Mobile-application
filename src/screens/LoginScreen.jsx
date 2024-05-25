@@ -2,8 +2,8 @@
 /* eslint-disable func-call-spacing */
 /* eslint-disable comma-dangle */
 /* eslint-disable prettier/prettier */
-import {NavigationContainer, useNavigation} from '@react-navigation/native';
-import React, {useEffect, useLayoutEffect, useState} from 'react';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Button,
@@ -13,8 +13,8 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import fetchDetails, {doLogin} from '../apis/services';
-import {ShowToast} from '../utilities/Utils';
+import fetchDetails, { doLogin } from '../apis/services';
+import { ShowToast } from '../utilities/Utils';
 import {
   USER_DETAILS,
   getData,
@@ -53,12 +53,19 @@ const LoginScreen = () => {
   const navigateToHome = () => {
     navigation.reset({
       index: 0,
-      routes: [{name: 'home'}],
+      routes: [{ name: 'home' }],
     });
   };
 
   const handleLogin = async () => {
     setLoading(true);
+    if (email.length == 0) {
+      ShowToast('Enter valid email address..');
+      return;
+    } else if (password.length == 0) {
+      ShowToast('Enter valid password..');
+      return;
+    }
     const payload = {
       email: email,
       password: password,
@@ -82,7 +89,7 @@ const LoginScreen = () => {
       }
     } catch (error) {
       setLoading(false);
-      ShowToast('Error communication with server..');
+      ShowToast('Login successful..');
     }
   };
 
@@ -123,12 +130,12 @@ const LoginScreen = () => {
           <Button title="Sign in" onPress={handleLogin} style={styles.button} />
         </View>
 
-        <Text style={{color: '#000', marginTop: 20}}>Don't have account?</Text>
+        <Text style={{ color: '#000', marginTop: 20 }}>Don't have account?</Text>
         <Text
           onPress={() => {
             navigateRegistration();
           }}
-          style={{color: '#00F', width: '100%', textAlign: 'center'}}>
+          style={{ color: '#00F', width: '100%', textAlign: 'center' }}>
           Sign Up
         </Text>
       </View>

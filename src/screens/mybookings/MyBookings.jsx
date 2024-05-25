@@ -23,10 +23,10 @@ const MyBookings = () => {
     fetchBookings();
   }, []);
 
-  const bookedStatusIndicator = () => {
-    if (resource_booking_status == 'Booked') {
+  const bookedStatusIndicator = (bookingStatus) => {
+    if (bookingStatus == 'Booked') {
       return <View style={styles.bookedCircle} />
-    } else if (resource_booking_status == 'Closed') {
+    } else if (bookingStatus == 'Closed') {
       return <View style={styles.closedCircle} />
     } else {
       return <View style={styles.requestedCircle} />
@@ -39,7 +39,7 @@ const MyBookings = () => {
         <View style={styles.card}>
           <View style={styles.row}>
             <Text style={styles.titleText}>{item.booking_title}</Text>
-            <View style={styles.requestedCircle} />
+            {bookedStatusIndicator(item.resource_booking_status)}
           </View >
           <View style={styles.row}>
             <Text style={styles.subTitleText}>{item.start_time} To {item.end_time}</Text>
