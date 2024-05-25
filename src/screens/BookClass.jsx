@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
-import {useNavigation} from '@react-navigation/native';
-import React, {useEffect, useLayoutEffect, useState} from 'react';
+import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Button,
@@ -12,10 +12,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Calendar} from 'react-native-calendars';
-import {TimerPicker, TimerPickerModal} from 'react-native-timer-picker';
-import {getAllRooms} from '../apis/services';
-import {CommonStyles, Styles} from '../components/CommonStyles';
+import { Calendar } from 'react-native-calendars';
+import { TimerPicker, TimerPickerModal } from 'react-native-timer-picker';
+import { getAllRooms } from '../apis/services';
+import { CommonStyles, Styles } from '../components/CommonStyles';
+import { Dropdown } from 'react-native-element-dropdown';
 
 const BookClass = () => {
   const [meetingTitle, setMeetingTitle] = useState('');
@@ -29,17 +30,30 @@ const BookClass = () => {
   const [timePicker, toggleTimePicker] = useState(false);
   const [timePickerTitle, setTimePickerTitle] = useState('');
   const [isLoading, setLoading] = useState(false);
+  const [rooms, setRooms] = useState([]);
+  const [selectedRoom, setSelectedRoom] = useState({});
+  // { label: 'Item 2', value: '2' },);
   const navigation = useNavigation();
 
-  const fetchRooms = async () => {
-    setLoading(true);
-    const response = await getAllRooms();
-    setLoading(false);
-    console.log('Response: ', response);
-  };
+  // const rooms = [{ room: 'Item 1', id: '1' },
+  // { room: 'Item 2', id: '2' }];
 
+
+  // const rooms = [];
   useEffect(() => {
     console.log('Fetching rooms');
+    const fetchRooms = async () => {
+      setLoading(true);
+      const response = await getAllRooms();
+      // rooms = response.data
+      const rooms = response.data.map((room) => {
+        return { roomId: room.id, roomLabel: room.resource_name };
+      });
+      console.log('Response: ', rooms);
+      setRooms(rooms);
+      setLoading(false);
+    };
+
     fetchRooms();
   }, []);
 
@@ -91,14 +105,20 @@ const BookClass = () => {
             autoCapitalize="sentences"
             placeholder="Type here"
           />
-          <Text style={styles.label}>Meeting Room No</Text>
-          <TextInput
-            style={styles.input}
-            value={meetingRoom}
-            onChangeText={setMeetingRoom}
-            keyboardType="default"
-            autoCapitalize="sentences"
-            placeholder="Type here"
+
+          <Text style={styles.label}>Select Meeting Room</Text>
+          <Dropdown style={styles.dropdown} data={rooms}
+            inputSearchStyle={styles.inputSearchStyle}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            labelField='roomLabel'
+            valueField='roomId'
+            placeholder='Select room'
+            value={selectedRoom}
+            onChange={(room) => {
+              setSelectedRoom(room)
+            }
+            }
           />
 
           <Text style={styles.label}>Meeting Date</Text>
@@ -219,11 +239,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'Wrap',
   },
-
   button: {
     width: '50%',
     paddingTop: 40,
     marginBottom: 50,
+  },
+  dropdown: {
+    height: 50,
+    borderColor: 'gray',
+    borderWidth: 0.5,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
   },
 });
 
