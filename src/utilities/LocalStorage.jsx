@@ -17,27 +17,33 @@ export const stringifyToJSON = (jsonString) => {
 
 
 export const setToLocal = async (key, data) => {
-    try {
-        // await AsyncStorage.setItem(key, data);
-        await AsyncStorage.setItem(key, data);
-      } catch (error) {
-        console.log('Error while saving detials on local S');
-        // Error saving data
-      }
+  try {
+    // await AsyncStorage.setItem(key, data);
+    await AsyncStorage.setItem(key, data);
+  } catch (error) {
+    console.log('Error while saving detials on local S');
+    // Error saving data
+  }
 };
 
 export const getFromLocal = async (key) => {
-    try {
-        return await AsyncStorage.getItem(key, null);
-      } catch (error) {
-        return null;
-      }
+  try {
+    return await AsyncStorage.getItem(key, null);
+  } catch (error) {
+    return null;
+  }
 };
 
 export const clearLocalStorage = async () => {
-    try {
-        await AsyncStorage.clear();
-    } catch(error) {
-        console.log('Error while clearing the storage');
-    }
+  try {
+    await AsyncStorage.clear();
+  } catch (error) {
+    console.log('Error while clearing the storage');
+  }
 };
+
+export const getUserFromLocal = async () => {
+  const userString = await getFromLocal(USER_DETAILS);
+  console.log('Local Data user: ', userString);
+  return await JSON.parse(userString);
+}

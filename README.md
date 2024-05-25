@@ -1,5 +1,18 @@
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
+Dropdown module
+https://www.npmjs.com/package/react-native-element-dropdown
+
+React native calendar
+https://www.npmjs.com/package/react-native-calendars
+
+React native time-picker
+https://www.npmjs.com/package/react-native-timer-picker
+
+React native Axios
+https://www.npmjs.com/package/react-native-axios
+
+
 # Getting Started
 
 >**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.

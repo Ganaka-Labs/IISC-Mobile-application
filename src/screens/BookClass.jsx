@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   Button,
   Keyboard,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -14,13 +15,14 @@ import {
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { TimerPicker, TimerPickerModal } from 'react-native-timer-picker';
-import { getAllRooms } from '../apis/services';
+import { getAllRooms, submitRoomReq } from '../apis/services';
 import { CommonStyles, Styles } from '../components/CommonStyles';
 import { Dropdown } from 'react-native-element-dropdown';
+import { ShowToast } from '../utilities/Utils';
+import { getUser, getUserFromLocal } from '../utilities/LocalStorage';
 
 const BookClass = () => {
   const [meetingTitle, setMeetingTitle] = useState('');
-  const [meetingRoom, setMeetingRoom] = useState('');
   const [meetingDate, setMeetingDate] = useState('');
   const [meetingStartTime, setMeetingStartTime] = useState('');
   const [meetingEndTime, setMeetingEndTime] = useState('');
@@ -32,24 +34,19 @@ const BookClass = () => {
   const [isLoading, setLoading] = useState(false);
   const [rooms, setRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState({});
-  // { label: 'Item 2', value: '2' },);
   const navigation = useNavigation();
-
-  // const rooms = [{ room: 'Item 1', id: '1' },
-  // { room: 'Item 2', id: '2' }];
 
 
   // const rooms = [];
   useEffect(() => {
-    console.log('Fetching rooms');
     const fetchRooms = async () => {
       setLoading(true);
       const response = await getAllRooms();
       // rooms = response.data
       const rooms = response.data.map((room) => {
+        console.log('Room: ', room);
         return { roomId: room.id, roomLabel: room.resource_name };
       });
-      console.log('Response: ', rooms);
       setRooms(rooms);
       setLoading(false);
     };
@@ -58,8 +55,31 @@ const BookClass = () => {
   }, []);
 
   const handleBookRoom = () => {
-    console.log('Book room');
+    submitReq()
   };
+
+  const submitReq = async () => {
+    const loggedInUser = await getUserFromLocal();
+    const payload = {
+      'user_id': loggedInUser['id'],
+      'resource_id': selectedRoom.roomId,
+      'booking_date': meetingDate,
+      'booking_title': meetingTitle,
+      'remarks': remarks,
+      'start_time': meetingStartTime,
+      'end_time': meetingEndTime
+    }
+    console.log('Payload: ', payload);
+    setLoading(true);
+    const response = await submitRoomReq(payload);
+    console.log('Respone: ', response.data);
+    setLoading(false);
+    if (response?.data?.id) {
+      ShowToast("Booking request submitted successfully..")
+    } else {
+      ShowToast("Error while submitting booking request")
+    }
+  }
 
   const handleTimePicker = shdStartTime => {
     console.log('Time picker');
@@ -84,7 +104,6 @@ const BookClass = () => {
   };
 
   const handleDataPicker = () => {
-    console.log('Handle DP');
     Keyboard.dismiss();
     toggleDatePicker(!datePicker);
   };
@@ -94,117 +113,112 @@ const BookClass = () => {
       {isLoading && (
         <ActivityIndicator style={CommonStyles.loader} size="large" />
       )}
-      <View style={styles.container}>
-        <View>
-          <Text style={styles.label}>Meeting Title</Text>
-          <TextInput
-            style={styles.input}
-            value={meetingTitle}
-            onChangeText={setMeetingTitle}
-            keyboardType="default"
-            autoCapitalize="sentences"
-            placeholder="Type here"
-          />
-
-          <Text style={styles.label}>Select Meeting Room</Text>
-          <Dropdown style={styles.dropdown} data={rooms}
-            inputSearchStyle={styles.inputSearchStyle}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            labelField='roomLabel'
-            valueField='roomId'
-            placeholder='Select room'
-            value={selectedRoom}
-            onChange={(room) => {
-              setSelectedRoom(room)
-            }
-            }
-          />
-
-          <Text style={styles.label}>Meeting Date</Text>
-          <TextInput
-            style={styles.input}
-            value={meetingDate}
-            onChangeText={setMeetingDate}
-            secureTextEntry
-            placeholder="Pick a date"
-          />
-        </View>
-
-        <Text style={styles.label}>Meeting Date</Text>
-        {datePicker && (
-          <Calendar
-            onDayPress={day => {
-              console.log('selected day', day);
-              setMeetingDate(day.dateString);
-              toggleDatePicker(!datePicker);
-            }}
-            minDate={new Date()}
-          />
-        )}
-        <TouchableOpacity onPress={() => handleDataPicker(true)}>
-          <View pointerEvents="none">
+      <ScrollView>
+        <View style={styles.container}>
+          <View>
+            <Text style={styles.label}>Meeting Title</Text>
             <TextInput
               style={styles.input}
-              value={meetingDate}
-              onChangeText={setMeetingDate}
+              value={meetingTitle}
+              onChangeText={setMeetingTitle}
+              keyboardType="default"
+              autoCapitalize="sentences"
+              placeholder="Type here"
+            />
+
+            <Text style={styles.label}>Select Meeting Room</Text>
+            <Dropdown style={styles.dropdown} data={rooms}
+              inputSearchStyle={styles.inputSearchStyle}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              labelField='roomLabel'
+              valueField='roomId'
+              placeholder='Select room'
+              value={selectedRoom}
+              onChange={(room) => {
+                setSelectedRoom(room)
+              }
+              }
             />
           </View>
-        </TouchableOpacity>
-        <Text style={styles.label}>Time</Text>
 
-        {timePicker && (
-          <TimerPickerModal
-            visible={timePicker}
-            setIsVisible={toggleTimePicker}
-            onConfirm={pickedDuration => {
-              console.log('Picked duration: ', pickedDuration);
-              setTime(pickedDuration.hours + ' : ' + pickedDuration.minutes);
-              toggleTimePicker(!timePicker);
-            }}
-            modalTitle={timePickerTitle}
-            onCancel={() => toggleTimePicker(!timePicker)}
-            closeOnOverlayPress
-            use12HourPicker
-            hideSeconds
-            styles={{
-              theme: 'light',
-            }}
+          <Text style={styles.label}>Meeting Date</Text>
+          {datePicker && (
+            <Calendar
+              placeholder='Select date'
+              onDayPress={selectedDate => {
+                const concatSelectedDate = selectedDate.day.toString().concat('/', selectedDate.month).concat('/', selectedDate.year);
+                console.log('selected date', concatSelectedDate);
+                setMeetingDate(concatSelectedDate);
+                toggleDatePicker(!datePicker);
+              }}
+              minDate={new Date().toString()}
+            />
+          )}
+          <TouchableOpacity onPress={() => handleDataPicker(true)}>
+            <View pointerEvents="none">
+              <TextInput
+                style={styles.input}
+                value={meetingDate}
+                onChangeText={setMeetingDate}
+              />
+            </View>
+          </TouchableOpacity>
+
+          <Text style={styles.label}>Time</Text>
+          {timePicker && (
+            <TimerPickerModal
+              visible={timePicker}
+              setIsVisible={toggleTimePicker}
+              onConfirm={pickedDuration => {
+                console.log('Picked duration: ', pickedDuration);
+                setTime(pickedDuration.hours + ':' + pickedDuration.minutes);
+                toggleTimePicker(!timePicker);
+              }}
+              modalTitle={timePickerTitle}
+              onCancel={() => toggleTimePicker(!timePicker)}
+              closeOnOverlayPress
+              use12HourPicker
+              hideSeconds
+              styles={{
+                theme: 'light',
+              }}
+            />
+          )}
+          <View style={styles.row}>
+            <TouchableOpacity onPress={() => handleTimePicker(true)}>
+              <View pointerEvents="none">
+                <TextInput
+                  style={styles.input}
+                  placeholder="Start time"
+                  value={meetingStartTime}
+                  onChangeText={setMeetingStartTime}
+                />
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => handleTimePicker(false)}>
+              <View pointerEvents="none">
+                <TextInput
+                  style={styles.input}
+                  placeholder="End time"
+                  value={meetingEndTime}
+                  onChangeText={setMeetingEndTime}
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.label}>Remarks</Text>
+          <TextInput
+            style={styles.input}
+            value={remarks}
+            onChangeText={setRemarks}
+            keyboardType="default"
+            autoCapitalize="sentences"
           />
-        )}
-        <View style={styles.row}>
-          <TouchableOpacity onPress={() => handleTimePicker(true)}>
-            <View pointerEvents="none">
-              <TextInput
-                style={styles.input}
-                placeholder="Start time"
-                value={meetingStartTime}
-                onChangeText={setMeetingStartTime}
-              />
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => handleTimePicker(false)}>
-            <View pointerEvents="none">
-              <TextInput
-                style={styles.input}
-                placeholder="End time"
-                value={meetingEndTime}
-                onChangeText={setMeetingEndTime}
-              />
-            </View>
-          </TouchableOpacity>
+          <Button title="Book Room" onPress={handleBookRoom} />
         </View>
-        <Text style={styles.label}>Remarks</Text>
-        <TextInput
-          style={styles.input}
-          value={remarks}
-          onChangeText={setRemarks}
-          keyboardType="default"
-          autoCapitalize="sentences"
-        />
-        <Button title="Book Room" onPress={handleBookRoom} />
-      </View>
+      </ScrollView>
     </>
   );
 };

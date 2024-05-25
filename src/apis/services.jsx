@@ -8,6 +8,7 @@ const BaseUrl =
 const Login = 'user/signin';
 const Registration = 'user/signup';
 const Rooms = 'resource/';
+const SubmitRoomReq = 'booking';
 
 export const doLogin = async (payload) => {
   try {
@@ -15,7 +16,7 @@ export const doLogin = async (payload) => {
     console.log('Success: ', resposne.data);
     return resposne.data;
   } catch (error) {
-    console.log('Error: ', error);
+    ShowToast("Error while communicating with the server..")
     return error;
   }
 };
@@ -26,7 +27,7 @@ export const doRegistration = async (payload) => {
     console.log('Success: ', resposne.data);
     return resposne.data;
   } catch (error) {
-    console.log('Error: ', error);
+    ShowToast("Error while communicating with the server..")
     return error;
   }
 };
@@ -35,11 +36,23 @@ export const doLogout = async () => {
   await clearLocalStorage();
 }
 
-export const getAllRooms = async() => {
+export const getAllRooms = async () => {
   try {
     const response = await axios.get(BaseUrl + Rooms);
-    if(response) { return response.data};
+    if (response) { return response.data };
   } catch (error) {
+    ShowToast("Error while communicating with the server..")
+    return error;
+  }
+}
+
+export const submitRoomReq = async (payload) => {
+  try {
+    const response = await axios.post(BaseUrl + SubmitRoomReq, payload);
+    console.log('Submit Req res: ', response);
+    if (response) { return response.data };
+  } catch (error) {
+    ShowToast("Error while communicating with the server..")
     return error;
   }
 }
