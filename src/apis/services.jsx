@@ -8,7 +8,8 @@ const BaseUrl =
 const Login = 'user/signin';
 const Registration = 'user/signup';
 const Rooms = 'resource/';
-const SubmitRoomReq = 'booking';
+const CreateBooking = 'booking';
+const AllBookings = 'booking';
 
 export const doLogin = async (payload) => {
   try {
@@ -48,8 +49,18 @@ export const getAllRooms = async () => {
 
 export const submitRoomReq = async (payload) => {
   try {
-    const response = await axios.post(BaseUrl + SubmitRoomReq, payload);
+    const response = await axios.post(BaseUrl + CreateBooking, payload);
     console.log('Submit Req res: ', response);
+    if (response) { return response.data };
+  } catch (error) {
+    ShowToast("Error while communicating with the server..")
+    return error;
+  }
+}
+
+export const getAllBookings = async () => {
+  try {
+    const response = await axios.get(BaseUrl + AllBookings);
     if (response) { return response.data };
   } catch (error) {
     ShowToast("Error while communicating with the server..")

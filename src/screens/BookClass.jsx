@@ -44,7 +44,6 @@ const BookClass = () => {
       const response = await getAllRooms();
       // rooms = response.data
       const rooms = response.data.map((room) => {
-        console.log('Room: ', room);
         return { roomId: room.id, roomLabel: room.resource_name };
       });
       setRooms(rooms);
@@ -200,7 +199,7 @@ const BookClass = () => {
             <TouchableOpacity onPress={() => handleTimePicker(false)}>
               <View pointerEvents="none">
                 <TextInput
-                  style={styles.input}
+                  style={[styles.input, styles.endTime]}
                   placeholder="End time"
                   value={meetingEndTime}
                   onChangeText={setMeetingEndTime}
@@ -244,9 +243,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
-    // paddingHorizontal: 100,
     marginBottom: 20,
     float: 'left',
+  },
+  endTime: {
+    marginLeft: 20
   },
   row: {
     display: 'flex',

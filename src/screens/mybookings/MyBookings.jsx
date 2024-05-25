@@ -1,114 +1,77 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/jsx-no-undef */
 /* eslint-disable prettier/prettier */
-import React from 'react';
-import {FlatList, StyleSheet, Text, View} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { COLORS } from '../../utilities/colors';
+import { getAllBookings } from '../../apis/services';
+import { CommonStyles } from '../../components/CommonStyles';
 
 const MyBookings = () => {
-  const data = [
-    {
-      id: '1',
-      text: 'Tea',
-      time: '7:40AM to 0840 Am',
-      date: '11/12/2024',
-      bottomText: 'Room No: 02',
-    },
-    {
-      id: '2',
-      text: 'Tea',
-      time: '7:40AM to 0840 Am',
-      date: '11/12/2024',
-      bottomText: 'Room No: 02',
-    },
-    {
-      id: '3',
-      text: 'Tea',
-      time: '7:40AM to 0840 Am',
-      date: '11/12/2024',
-      bottomText: 'Room No: 02',
-    },
-    {
-      id: '4',
-      text: 'Tea',
-      time: '7:40AM to 0840 Am',
-      date: '11/12/2024',
-      bottomText: 'Room No: 02',
-    },
-    {
-      id: '5',
-      text: 'Tea',
-      time: '7:40AM to 0840 Am',
-      date: '11/12/2024',
-      bottomText: 'Room No: 02',
-    },
-    {
-      id: '1',
-      text: 'Tea',
-      time: '7:40AM to 0840 Am',
-      date: '11/12/2024',
-      bottomText: 'Room No: 02',
-    },
-    {
-      id: '2',
-      text: 'Tea',
-      time: '7:40AM to 0840 Am',
-      date: '11/12/2024',
-      bottomText: 'Room No: 02',
-    },
-    {
-      id: '3',
-      text: 'Tea',
-      time: '7:40AM to 0840 Am',
-      date: '11/12/2024',
-      bottomText: 'Room No: 02',
-    },
-    {
-      id: '4',
-      text: 'Tea',
-      time: '7:40AM to 0840 Am',
-      date: '11/12/2024',
-      bottomText: 'Room No: 02',
-    },
-    {
-      id: '5',
-      text: 'Tea',
-      time: '7:40AM to 0840 Am',
-      date: '11/12/2024',
-      bottomText: 'Room No: 02',
-    },
-  ];
 
-  const renderItem = ({item}) => {
+  const [myBookings, setMyBookings] = useState([]);
+  const [isLoading, setLoading] = useState(false);
+  useEffect(() => {
+    const fetchBookings = async () => {
+      setLoading(true);
+      const bookings = await getAllBookings();
+      setMyBookings(bookings.data);
+      setLoading(false);
+    };
+
+    fetchBookings();
+  }, []);
+
+  const bookedStatusIndicator = () => {
+    if (resource_booking_status == 'Booked') {
+      return <View style={styles.bookedCircle} />
+    } else if (resource_booking_status == 'Closed') {
+      return <View style={styles.closedCircle} />
+    } else {
+      return <View style={styles.requestedCircle} />
+    }
+  }
+
+  const renderItem = ({ item }) => {
     return (
       <View>
         <View style={styles.card}>
           <View style={styles.row}>
-            <Text style={styles.titleText}>{item.text}</Text>
+            <Text style={styles.titleText}>{item.booking_title}</Text>
+            <View style={styles.requestedCircle} />
+          </View >
+          <View style={styles.row}>
+            <Text style={styles.subTitleText}>{item.start_time} To {item.end_time}</Text>
+            <Text style={styles.subTitleText}>{item.booking_date}</Text>
           </View>
           <View style={styles.row}>
-            <Text style={styles.subTitleText}>{item.time}</Text>
-            <Text style={styles.subTitleText}>{item.date}</Text>
+            <Text style={styles.subTitleText}>{item.resource_name}</Text>
           </View>
-          <View style={styles.row}>
-            <Text style={styles.subTitleText}>{item.bottomText}</Text>
-          </View>
-        </View>
+        </View >
       </View>
     );
   };
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-      />
-    </View>
+    <>
+      {isLoading && (
+        <ActivityIndicator style={CommonStyles.loader} size="large" />
+      )}
+      <View style={styles.container}>
+        <FlatList
+          data={myBookings}
+          renderItem={renderItem}
+          keyExtractor={item => item.id}
+        />
+      </View>
+    </>
+
   );
 };
+
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -124,7 +87,7 @@ const styles = StyleSheet.create({
   card: {
     margin: 10,
     padding: 12,
-    marginBottom:2,
+    marginBottom: 2,
     backgroundColor: 'white',
     borderRadius: 10,
     shadowColor: 'black',
@@ -150,11 +113,23 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'space-between',
   },
-  circle: {
-    width: '40',
-    height: '40',
-    borderRadius: '50%',
-    backgroundColor: 'red',
+  bookedCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 40 / 2,
+    backgroundColor: '#55D55A',
+  },
+  requestedCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 40 / 2,
+    backgroundColor: '#FFCC68',
+  },
+  closedCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 40 / 2,
+    backgroundColor: '#FF0F00',
   },
   titleText: {
     color: COLORS.titleColor,
