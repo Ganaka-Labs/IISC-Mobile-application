@@ -42,8 +42,7 @@ const Profile = () => {
 
   const getUserProfileFromLocal = async () => {
     user = await getUserFromLocal();
-    setFirstName(user.name);
-    setLastName();
+    setName(user.name);
     setEmail(user.email);
   }
 

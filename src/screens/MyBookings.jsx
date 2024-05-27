@@ -4,9 +4,9 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
-import { COLORS } from '../../utilities/colors';
-import { getAllBookings } from '../../apis/services';
-import { CommonStyles } from '../../components/CommonStyles';
+import { COLORS } from '../utilities/colors';
+import { getAllBookings } from '../apis/services';
+import { CommonStyles } from '../components/CommonStyles';
 
 const MyBookings = () => {
 
