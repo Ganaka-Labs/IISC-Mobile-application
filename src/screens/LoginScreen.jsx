@@ -58,7 +58,7 @@ const LoginScreen = () => {
   };
 
   const handleLogin = async () => {
-    setLoading(true);
+
     if (email.length == 0) {
       ShowToast('Enter valid email address..');
       return;
@@ -72,16 +72,9 @@ const LoginScreen = () => {
     };
     try {
       const response = await doLogin(payload);
-      const userString = await JSON.stringify(response);
-      await setToLocal(USER_DETAILS, userString);
-      // const localData = await getFromLocal(USER_DETAILS);
-      // console.log('Local Data user: ', localData);
-      // const user = await JSON.parse(localData);
-      // console.log('Local Data JSON obj: ', user);
-      // console.log('Token: ',user.token);
-      // console.log('Email: ',user.email);
-      setLoading(false);
       if (response) {
+        const userString = await JSON.stringify(response);
+        await setToLocal(USER_DETAILS, userString);
         ShowToast('Login successful..');
         navigateToHome();
       } else {
@@ -89,8 +82,9 @@ const LoginScreen = () => {
       }
     } catch (error) {
       setLoading(false);
-      ShowToast('Login successful..');
+      ShowToast('Login failed..');
     }
+    setLoading(false);
   };
 
   const navigateRegistration = () => {

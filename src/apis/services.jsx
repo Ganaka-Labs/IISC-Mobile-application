@@ -8,8 +8,9 @@ const BaseUrl =
 const Login = 'user/signin';
 const Registration = 'user/signup';
 const Rooms = 'resource/';
-const CreateBooking = 'booking/';
+const CreateBooking = 'booking';
 const AllBookings = 'booking';
+const UpdateUser = 'user/'
 
 export const doLogin = async (payload) => {
   try {
@@ -61,6 +62,17 @@ export const submitRoomReq = async (payload) => {
 export const getAllBookings = async () => {
   try {
     const response = await axios.get(BaseUrl + AllBookings);
+    if (response) { return response.data };
+  } catch (error) {
+    ShowToast("Error while communicating with the server..")
+    return error;
+  }
+}
+
+export const updateUser = async (payload) => {
+  try {
+    const response = await axios.patch(BaseUrl + UpdateUser, payload);
+    console.log('Update user res: ', response);
     if (response) { return response.data };
   } catch (error) {
     ShowToast("Error while communicating with the server..")

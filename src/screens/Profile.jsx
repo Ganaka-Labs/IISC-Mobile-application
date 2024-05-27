@@ -2,31 +2,54 @@
 /* eslint-disable no-trailing-spaces */
 /* eslint-disable react-native/no-inline-Styles */
 /* eslint-disable prettier/prettier */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, View, Text, TextInput, Stylesheet, StyleSheet } from 'react-native';
-import { doLogout } from '../apis/services';
+import { doLogout, updateUser } from '../apis/services';
 import { useNavigation } from '@react-navigation/native';
 import { ShowToast } from '../utilities/Utils';
 import { useState } from 'react';
+import { getUserFromLocal } from '../utilities/LocalStorage';
 
 
 
 const Profile = () => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const navigation = useNavigation();
 
-  const handleProfile = async () => {
-    const Profile = {
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      phone: phone,
-    };
+  let user;
+
+  const updateProfile = async () => {
+    try {
+      const ProfilePayload = {
+        name: name,
+        id: user.id,
+        email: email,
+        phone: phone,
+      };
+
+      const res = await updateUser(ProfilePayload);
+      console.log('Res: ', res);
+      if (res)
+        ShowToast('Changes edited successfully.');
+    } catch (error) {
+      ShowToast('Unable to save changes..');
+    }
+
 
   };
+
+  const getUserProfileFromLocal = async () => {
+    user = await getUserFromLocal();
+    setFirstName(user.name);
+    setLastName();
+    setEmail(user.email);
+  }
+
+  useEffect(() => {
+    getUserProfileFromLocal();
+  }, [])
 
   const handleLogout = () => {
     doLogout();
@@ -34,8 +57,7 @@ const Profile = () => {
     navigation.reset({ index: 0, routes: [{ name: 'login' }] });
   };
   const EditChanges = () => {
-    handleProfile();
-    ShowToast('Changes edited successfully.');
+    updateProfile();
   };
 
   return (
@@ -44,18 +66,9 @@ const Profile = () => {
         <Text style={Styles.label}>Firstname</Text>
         <TextInput
           style={Styles.input}
-          value={firstName}
-          onChangeText={setFirstName}
+          value={name}
+          onChangeText={setName}
           placeholder="First Name"
-          keyboardType="text"
-          autoCapitalize="sentences"
-        />
-        <Text style={Styles.label}>Lastname</Text>
-        <TextInput
-          style={Styles.input}
-          value={lastName}
-          onChangeText={setLastName}
-          placeholder="Last Name"
           keyboardType="text"
           autoCapitalize="sentences"
         />
@@ -90,7 +103,7 @@ const Styles = StyleSheet.create({
   container1: {
     // flex: 1,
     justifyContent: 'center',
-    padding:5
+    padding: 5
   },
 
   input: {
@@ -111,9 +124,9 @@ const Styles = StyleSheet.create({
     textAlign: 'left',
   },
   editButton: {
-    display:'flex',
-    flexDirection:"column",
-    gap:10 
+    display: 'flex',
+    flexDirection: "column",
+    gap: 10
   },
 
 });

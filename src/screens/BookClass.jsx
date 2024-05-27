@@ -71,9 +71,8 @@ const BookClass = () => {
     console.log('Payload: ', payload);
     setLoading(true);
     const response = await submitRoomReq(payload);
-    console.log('Respone: ', response.data);
     setLoading(false);
-    if (response?.data?.id) {
+    if (response?.id) {
       ShowToast("Booking request submitted successfully..")
     } else {
       ShowToast("Error while submitting booking request")
