@@ -2,7 +2,7 @@
 /* eslint-disable react/jsx-no-undef */
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { COLORS } from '../utilities/colors';
 import { getAllBookings } from '../apis/services';
@@ -31,6 +31,14 @@ const MyBookings = () => {
     } else {
       return <View style={styles.requestedCircle} />
     }
+  }
+
+  const onRefresh = async() => {
+    setLoading(true);
+    const bookings = await getAllBookings();
+    setMyBookings(bookings.data);
+    setLoading(false);
+    console.log('end refresh`: ', isLoading)
   }
 
   const renderItem = ({ item }) => {
@@ -63,7 +71,10 @@ const MyBookings = () => {
           data={myBookings}
           renderItem={renderItem}
           keyExtractor={item => item.id}
-        />
+          refreshControl={
+            <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
+          }
+        /> 
       </View>
     </>
 
