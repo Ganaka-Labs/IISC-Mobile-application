@@ -48,7 +48,7 @@ const LoginScreen = () => {
 
   useEffect(() => {
     isLoggedIn();
-  });
+  }, []);
 
   const navigateToHome = () => {
     navigation.reset({

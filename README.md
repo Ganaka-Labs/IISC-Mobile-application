@@ -1,7 +1,9 @@
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 Dropdown module
-https://www.npmjs.com/package/react-native-element-dropdown
+https://reactnavigation.org/docs/tab-view/
+npm install react-native-tab-view
+npm install react-native-pager-view
 
 React native calendar
 https://www.npmjs.com/package/react-native-calendars

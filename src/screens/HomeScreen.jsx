@@ -5,15 +5,6 @@ import {SceneMap, TabView} from 'react-native-tab-view';
 import BookClass from './BookClass';
 import MyBooking from './MyBookings';
 import Profile from './Profile';
-import LoginScreen from './LoginScreen';
-
-// const FirstRoute = () => (
-//     <View style={{ flex: 1, backgroundColor: '#ff4081' }} />
-//   );
-
-//   const SecondRoute = () => (
-//     <View style={{ flex: 1, backgroundColor: '#673ab7' }} />
-//   );
 
 const tabs = SceneMap({
   book_class: BookClass,
